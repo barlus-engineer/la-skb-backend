@@ -22,7 +22,7 @@ func LoadConfig() *Config {
 	}
 	cfg_Port := os.Getenv("PORT")
 	if cfg_Port == "" {
-		cfg_IP = "127.0.0.1"
+		cfg_Port = "3432"
 	}
 	cfg_Db_Host := os.Getenv("DB_HOST")
 	if cfg_Db_Host == "" {
