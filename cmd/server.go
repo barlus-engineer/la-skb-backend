@@ -1,7 +1,9 @@
 package main
 
-import "log"
+import "la-skb/pkg/logger"
 
 func main() {
-    log.Println("Hello, Barlus!")
+    logger.Info("Hi brother")
+    logger.Warning("Hi brother")
+    logger.Alert("Hi brother")
 }
