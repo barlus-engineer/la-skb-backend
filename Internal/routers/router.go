@@ -7,6 +7,8 @@ import (
 )
 
 func SetupServer() *gin.Engine {
+	gin.SetMode(gin.ReleaseMode)
+	
 	app := gin.New()
 
 	app.GET("/", controllers.HelloWorld)

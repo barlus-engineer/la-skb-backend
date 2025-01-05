@@ -1,9 +1,9 @@
 package db
 
 import (
-	"fmt"
 	"la-skb/config"
 	"la-skb/pkg/logger"
+	"log"
 
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -18,8 +18,7 @@ func InitDB() {
 	var err error
 	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
-		logger.Alert(fmt.Sprintf("Failed to connect to the database: %v", err))
-		panic(fmt.Sprintf("Cannot proceed without a database connection: %v", err)) // Optional but ensures failure is handled.
+		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
 	logger.Info("Connected to MariaDB successfully")
