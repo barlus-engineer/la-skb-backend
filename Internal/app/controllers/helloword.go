@@ -1,11 +1,21 @@
 package controllers
 
-import "github.com/gin-gonic/gin"
+import (
+	"net/http"
+
+	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
+)
 
 func HelloWorld(c *gin.Context) {
-	text := map[string]string {
-		"message": "Hello, World!",
-		"version": "0.1",
+	session := sessions.Default(c)
+	Username := session.Get("username")
+	if Username == nil {
+		Username = "null"
 	}
-	c.JSON(200, text)
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Hello, World!",
+		"username": Username,
+		"version": "0.1",
+	})
 }

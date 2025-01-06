@@ -10,6 +10,7 @@ import (
 type Config struct {
 	IP   	string
 	Port 	string
+	Secret	string
 	DbURI	string
 }
 
@@ -28,11 +29,13 @@ func LoadConfig() *Config {
 	if cfg_Port == "" {
 		cfg_Port = "3432"
 	}
+	cfg_Db_Secret := os.Getenv("SECRET")
 	cfg_Db_URI := os.Getenv("DB_URI")
 
 	cfg := Config{
 		IP:   cfg_IP,
 		Port: cfg_Port,
+		Secret: cfg_Db_Secret,
 		DbURI: cfg_Db_URI,
 	}
 

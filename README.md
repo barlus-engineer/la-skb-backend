@@ -46,6 +46,7 @@ Ensure you have the following installed on your system:
    ```env
    IP=localhost
    PORT=3432
+   SECRET=[your secret key]
    DB_URI="[username]:[password]@tcp(127.0.0.1:3306)/[database]?charset=utf8mb4&parseTime=True&loc=Local"
    ```
 
