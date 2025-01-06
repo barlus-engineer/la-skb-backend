@@ -1,4 +1,4 @@
-package db
+package database
 
 import (
 	"la-skb/config"
@@ -21,7 +21,7 @@ func InitDB() {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	logger.Info("Connected to MariaDB successfully")
+	logger.Info("Connected to MariaDB successfully!")
 }
 
 func GetDB() *gorm.DB {

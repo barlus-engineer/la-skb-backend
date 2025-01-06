@@ -2,14 +2,19 @@ package main
 
 import (
 	"fmt"
-	"la-skb/Internal/app/db"
+	"la-skb/Internal/app/database"
 	"la-skb/Internal/routers"
 	"la-skb/config"
 	"la-skb/pkg/logger"
 )
 
 func main() {
-    db.InitDB()
+    // database
+    database.InitDB()
+    db := database.GetDB()
+    database.MigrateDB(db)
+
+    // server
     cfg := config.LoadConfig()
     serve :=  routers.SetupServer()
 
