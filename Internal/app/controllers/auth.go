@@ -1,21 +1,17 @@
 package controllers
 
 import (
+	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/services"
 	"net/http"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/sessions"
+	"github.com/gin-gonic/gin"
 )
 
-type FormData struct {
-	Username string
-	Password string
-}
-
 func SignUp(c *gin.Context) {
-	var data FormData
+	var data entities.AuthFormData
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -39,7 +35,7 @@ func SignUp(c *gin.Context) {
 }
 
 func SignIn(c *gin.Context) {
-	var data FormData
+	var data entities.AuthFormData
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),

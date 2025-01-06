@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"la-skb/Internal/app/database"
+	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/models"
 	"log"
 	"net/http"
@@ -11,17 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-type ReturnData struct {
-	Status	int
-	Message	string
-}
-
-func SignUp(Username string, Password string) *ReturnData {
+func SignUp(Username string, Password string) *entities.AuthReturnData {
 	db := database.GetDB()
 
 	var user models.User
 	if err := db.Where("username = ?", Username).First(&user).Error; err == nil && err != gorm.ErrRecordNotFound {
-		return &ReturnData{
+		return &entities.AuthReturnData{
 			Status: http.StatusConflict,
 			Message: fmt.Sprintf("ຜູ້ໃຊ້ '%s' ມີໃນລະບົບແລ້ວ", Username),
 		}
@@ -37,30 +33,30 @@ func SignUp(Username string, Password string) *ReturnData {
 		Password: string(hashPassword),
 	}
 	if err := db.Create(&newUser).Error; err != nil {
-		return &ReturnData{
+		return &entities.AuthReturnData{
 			Status: http.StatusInternalServerError,
 			Message: "ມີບັນຫາໃນການສະມັກ",
 		}
 	}
-	return &ReturnData{
+	return &entities.AuthReturnData{
 		Status: http.StatusCreated,
 		Message: "ສະມັກສຳເລັດ",
 	}
 }
 
-func SignIn(Username string, Password string) *ReturnData {
+func SignIn(Username string, Password string) *entities.AuthReturnData {
 	db := database.GetDB()
 	var user models.User
 	
 	err := db.Where("username = ?", Username).First(&user).Error
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return &ReturnData{
+			return &entities.AuthReturnData{
 				Status: http.StatusNotFound,
 				Message: fmt.Sprintf("ບໍ່ມີຜູ້ໃຊ້ '%s' ໃນລະບົບ", Username),
 			}
 		}
-		return &ReturnData{
+		return &entities.AuthReturnData{
 			Status: http.StatusInternalServerError,
 			Message: "ເຊີບເວີມີບັນຫາບາງຢ່າງ",
 		}
@@ -69,13 +65,13 @@ func SignIn(Username string, Password string) *ReturnData {
 	userPassword := user.Password
 	err = bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(Password))
 	if err != nil {
-		return &ReturnData{
+		return &entities.AuthReturnData{
 			Status: http.StatusUnauthorized,
 			Message: "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
 		}
 	}
 
-	return &ReturnData{
+	return &entities.AuthReturnData{
 		Status: http.StatusOK,
 		Message: "ເຂົ້າສູ່ລະບົບສຳເລັດ",
 	}
