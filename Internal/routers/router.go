@@ -27,6 +27,8 @@ func SetupServer() *gin.Engine {
 	{
 		auth.POST("/signup", controllers.SignUp)
 		auth.POST("/signin", controllers.SignIn)
+		auth.POST("/signout", controllers.SignOut)
+		auth.POST("/delete_account", controllers.DeleteAccount)
 	}
 
 	return app

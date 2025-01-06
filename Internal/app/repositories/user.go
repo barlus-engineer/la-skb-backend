@@ -4,17 +4,14 @@ import (
 	"encoding/base64"
 	"errors"
 	"la-skb/Internal/app/database"
+	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/models"
 	"strings"
 
 	"golang.org/x/crypto/bcrypt"
 )
 
-type User struct {
-	ID       uint
-	Username string
-	Password string
-}
+type User entities.RepoUser
 
 func (p *User) Create(Username string, Password string) error {
 	db := database.GetDB()
@@ -52,24 +49,21 @@ func (p *User) GetByID(ID int) error {
 		return err
 	}
 
-	p.ID = userModel.ID
-	p.Username = userModel.Username
-	p.Password = userModel.Password
+	p.ID, p.Username, p.Password = userModel.ID, userModel.Username, userModel.Password
 
 	return nil
 }
 
 func (p *User) GetByUsername(Username string) error {
 	db := database.GetDB()
+	Username = base64.StdEncoding.EncodeToString([]byte(Username))
 	var userModel models.User
 
 	if err := db.Where("username = ?", Username).First(&userModel).Error; err != nil {
 		return err
 	}
 
-	p.ID = userModel.ID
-	p.Username = userModel.Username
-	p.Password = userModel.Password
+	p.ID, p.Username, p.Password = userModel.ID, userModel.Username, userModel.Password
 
 	return nil
 }
