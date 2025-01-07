@@ -52,7 +52,7 @@ Ensure you have the following installed on your system:
 
 3. **Install Dependencies**:
    ```bash
-   go mod tidy
+   go mod download
    ```
 
 4. **Build the Server**:
