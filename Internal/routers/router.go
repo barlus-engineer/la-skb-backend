@@ -22,7 +22,6 @@ func SetupServer() *gin.Engine {
 
 	app.GET("/", controllers.HelloWorld)
 
-	// auth
 	auth := app.Group("auth")
 	{
 		auth.POST("/signup", controllers.SignUp)
