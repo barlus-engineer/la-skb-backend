@@ -1,0 +1,17 @@
+app.version=0.1
+
+helloworld.helloworld=ສະບາຍດີ, ໂລກ!
+
+auth.signup.user_exists=ມີຊື່ຜູ້ໃຊ້ '%s' ໃນລະບົບແລ້ວ, ກະລຸນາຕັ້ງຊື່ຜູ້ໃຊ້ໃໝ່
+auth.signup.error=ມີບັນຫາໃນການລົງທະບຽນ
+
+auth.signin.user_notfound=ບໍ່ມີບັນຊີຜູ້ໃຊ້ '%s' ໃນລະບົບ
+auth.signin.server_error=ເຊີບເວີມີບັນຫາບາງຢ່າງ
+auth.signin.password_incorrect=ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ
+auth.signin.success=ເຂົ້າສູ່ລະບົບສຳເລັດແລ້ວ
+
+auth.delete_account.username_notfound=ບໍ່ມີບັນຊີຜູ້ໃຊ້ '%s' ໃນລະບົບ
+auth.delete_account.server_error=ເຊີບເວີມີບັນຫາບາງຢ່າງ
+auth.delete_account.password_incorrect=ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ
+auth.delete_account.error=ມີບັນຫາໃນການລົບບັນຊີຜູ້ໃຊ້ '%s'
+auth.delete_account.success=ລົບບັນຊີຜູ້ໃຊ້ '%s' ສຳເລັດແລ້ວ

@@ -23,7 +23,7 @@ func (p *Auth) SignUp() *entities.AuthReturnData {
 	if err := User.Create(p.Username, p.Password); err != nil {
 		return &entities.AuthReturnData{
 			Status: http.StatusInternalServerError,
-			Message: "ມີບັນຫາໃນການສະມັກຜູ້້ໃຊ້",
+			Message: "ມີບັນຫາໃນການສະມັກ",
 		}
 	}
 	return &entities.AuthReturnData{
