@@ -13,7 +13,7 @@ func MigrateDB(db *gorm.DB) {
 		&models.User{},
 	)
 	if err != nil {
-		log.Fatal("Failed to run migrations:", err)
+		log.Fatal("Failed to run migrations: ", err)
 	}
 	logger.Info("Database migrated successfully!")
 }

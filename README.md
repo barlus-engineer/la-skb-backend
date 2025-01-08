@@ -18,7 +18,7 @@ An open-source backend platform for a school knowledge base in Laos, licensed un
 
 - **Runtime:** [Go](https://go.dev/)
 - **Framework/Library:** Gin, GORM
-- **Database:** MariaDB
+- **Database:** Postgresql
 
 ## Getting Started
 
@@ -47,7 +47,7 @@ Ensure you have the following installed on your system:
    IP=localhost
    PORT=3432
    SECRET=[your secret key]
-   DB_URI="[username]:[password]@tcp(127.0.0.1:3306)/[database]?charset=utf8mb4&parseTime=True&loc=Local"
+   DB_URI="postgres://[username]:[password]@localhost:5432/[database]?sslmode=[sslmode]&timezone=[time zone]"
    ```
 
 3. **Install Dependencies**:
