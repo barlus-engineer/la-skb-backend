@@ -1,2 +1,4 @@
-cmd/server
+cmd/main
+main
+out
 .env

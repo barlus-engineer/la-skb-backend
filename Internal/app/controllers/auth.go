@@ -3,7 +3,7 @@ package controllers
 import (
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/services"
-	"la-skb/Internal/app/text"
+	"la-skb/text"
 	"net/http"
 	"strings"
 

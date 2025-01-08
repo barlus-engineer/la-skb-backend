@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/repositories"
-	"la-skb/Internal/app/text"
+	"la-skb/text"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"

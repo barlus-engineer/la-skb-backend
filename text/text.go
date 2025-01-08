@@ -9,15 +9,15 @@ import (
 var Set map[string]string
 
 func LoadLang() map[string]string {
-	lf := "Internal/app/text/locale/lao.lang"
+	lf := "locale/lao.lang"
 	result, err := pkg.LoadLangFile(lf)
 	if err != nil {
-		log.Fatalf("Cannot load language file: %s", err)
+		log.Fatalf("Cannot load text file: %s", err)
 	}
 	return result
 }
 
 func InitLang() {
 	Set = LoadLang()
-	logger.Info("Language file loaded successfully.")
+	logger.Info("Text file loaded successfully.")
 }

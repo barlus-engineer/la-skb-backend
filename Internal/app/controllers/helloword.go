@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"la-skb/Internal/app/text"
+	"la-skb/text"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
