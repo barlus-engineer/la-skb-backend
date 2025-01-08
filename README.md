@@ -57,12 +57,12 @@ Ensure you have the following installed on your system:
 
 4. **Build the Server**:
    ```bash
-   go build cmd/server.go
+   go build cmd/main.go
    ```
 
 5. **Start the Server**:
    ```bash
-   cmd/server
+   cmd/main
    ```
 
 <!-- ### Directory Structure
