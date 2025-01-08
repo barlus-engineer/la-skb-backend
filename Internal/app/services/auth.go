@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/repositories"
+	"la-skb/Internal/app/text"
 	"net/http"
 
 	"golang.org/x/crypto/bcrypt"
@@ -16,19 +17,19 @@ func (p *Auth) SignUp() *entities.AuthReturnData {
 	var User repositories.User
 	if err := User.GetByUsername(p.Username); err == nil && err != gorm.ErrRecordNotFound {
 		return &entities.AuthReturnData{
-			Status: http.StatusConflict,
-			Message: fmt.Sprintf("ມີຊື່ຜູ້ໃຊ້ '%s' ໃນລະບົບແລ້ວ", p.Username),
+			Status:  http.StatusConflict,
+			Message: fmt.Sprintf(text.Set["auth.signup.user_exists"], p.Username),
 		}
 	}
 	if err := User.Create(p.Username, p.Password); err != nil {
 		return &entities.AuthReturnData{
-			Status: http.StatusInternalServerError,
-			Message: "ມີບັນຫາໃນການສະມັກ",
+			Status:  http.StatusInternalServerError,
+			Message: text.Set["auth.signup.error"],
 		}
 	}
 	return &entities.AuthReturnData{
-		Status: http.StatusCreated,
-		Message: "ສະມັກສຳເລັດແລ້ວ",
+		Status:  http.StatusCreated,
+		Message: text.Set["auth.signup.success"],
 	}
 }
 
@@ -37,27 +38,27 @@ func (p *Auth) SignIn() *entities.AuthReturnData {
 	if err := User.GetByUsername(p.Username); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return &entities.AuthReturnData{
-				Status: http.StatusNotFound,
-				Message: fmt.Sprintf("ບໍ່ມີຊື່ຜູ້ໃຊ້ '%s' ໃນລະບົບ", p.Username),
+				Status:  http.StatusNotFound,
+				Message: fmt.Sprintf(text.Set["auth.signin.user_notfound"], p.Username),
 			}
 		}
 		return &entities.AuthReturnData{
-			Status: http.StatusInternalServerError,
-			Message: "ເຊີບເວີມີບັນຫາບາງຢ່າງ",
+			Status:  http.StatusInternalServerError,
+			Message: text.Set["auth.signin.server_error"],
 		}
 	}
 
 	userPassword := User.Password
 	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
 		return &entities.AuthReturnData{
-			Status: http.StatusUnauthorized,
-			Message: "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+			Status:  http.StatusUnauthorized,
+			Message: text.Set["auth.signin.password_incorrect"],
 		}
 	}
 
 	return &entities.AuthReturnData{
-		Status: http.StatusOK,
-		Message: "ເຂົ້າສູ່ລະບົບສຳເລັດແລ້ວ",
+		Status:  http.StatusOK,
+		Message: text.Set["auth.signin.success"],
 	}
 }
 
@@ -66,32 +67,32 @@ func (p *Auth) DeleteAccount() *entities.AuthReturnData {
 	if err := User.GetByUsername(p.Username); err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return &entities.AuthReturnData{
-				Status: http.StatusNotFound,
-				Message: fmt.Sprintf("ບໍ່ມີຊື່ຜູ້ໃຊ້ '%s' ໃນລະບົບ", p.Username),
+				Status:  http.StatusNotFound,
+				Message: fmt.Sprintf(text.Set["auth.delete_account.username_notfound"], p.Username),
 			}
 		}
 		return &entities.AuthReturnData{
-			Status: http.StatusInternalServerError,
-			Message: "ເຊີບເວີມີບັນຫາບາງຢ່າງ",
+			Status:  http.StatusInternalServerError,
+			Message: text.Set["auth.delete_account.server_error"],
 		}
 	}
 
 	userPassword := User.Password
 	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
 		return &entities.AuthReturnData{
-			Status: http.StatusUnauthorized,
-			Message: "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ",
+			Status:  http.StatusUnauthorized,
+			Message: text.Set["auth.delete_account.password_incorrect"],
 		}
 	}
 
 	if err := User.Delete(); err != nil {
 		return &entities.AuthReturnData{
-			Status: http.StatusInternalServerError,
-			Message: fmt.Sprintf("ມີບັນຫາໃນການລົບຜູ້ໃຊ້ '%s'", p.Username),
+			Status:  http.StatusInternalServerError,
+			Message: fmt.Sprintf(text.Set["auth.delete_account.error"], p.Username),
 		}
 	}
 	return &entities.AuthReturnData{
-		Status: http.StatusOK,
-		Message: fmt.Sprintf("ລົບຜູ້ໃຊ້ '%s' ສຳເລັດແລ້ວ", p.Username),
+		Status:  http.StatusOK,
+		Message: fmt.Sprintf(text.Set["auth.delete_account.success"], p.Username),
 	}
 }

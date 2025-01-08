@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"la-skb/Internal/app/database"
+	"la-skb/Internal/app/text"
 	"la-skb/Internal/routers"
 	"la-skb/config"
 	"la-skb/pkg/logger"
@@ -13,6 +14,9 @@ func main() {
     database.InitDB()
     db := database.GetDB()
     database.MigrateDB(db)
+
+    // lang
+    text.InitLang()
 
     // server
     cfg := config.LoadConfig()

@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"la-skb/Internal/app/text"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
@@ -14,8 +15,8 @@ func HelloWorld(c *gin.Context) {
 		Username = "null"
 	}
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Hello, World!",
+		"message":  text.Set["helloworld.helloworld"],
 		"username": Username,
-		"version": "0.1",
+		"version":  text.Set["app.version"],
 	})
 }

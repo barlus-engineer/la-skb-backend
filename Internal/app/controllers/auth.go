@@ -3,6 +3,7 @@ package controllers
 import (
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/services"
+	"la-skb/Internal/app/text"
 	"net/http"
 	"strings"
 
@@ -25,7 +26,7 @@ func SignUp(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ຂໍ້ມູນບໍ່ຄົບຖ້ວນ",
+			"error": text.Set["auth.signup.incomplete_form"],
 		})
 		return
 	}
@@ -50,7 +51,7 @@ func SignIn(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ຂໍ້ມູນບໍ່ຄົບຖ້ວນ",
+			"error": text.Set["auth.signin.incomplete_form"],
 		})
 		return
 	}
@@ -71,7 +72,7 @@ func SignOut(c *gin.Context) {
 	session.Clear()
 	session.Save()
 	c.JSON(http.StatusOK, gin.H{
-		"message": "ອອກຈາກລະບົບສຳເລັດແລ້ວ",
+		"message": text.Set["auth.signout.success"],
 	})
 }
 
@@ -89,7 +90,7 @@ func DeleteAccount(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "ຂໍ້ມູນບໍ່ຄົບຖ້ວນ",
+			"error": text.Set["auth.delete_account.incomplete_form"],
 		})
 		return
 	}
