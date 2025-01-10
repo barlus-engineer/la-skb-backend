@@ -37,8 +37,8 @@ Ensure you have the following installed on your system:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/barlus-engineer/la-school-knowledge-base-backend.git
-   cd la-school-knowledge-base-backend
+   git clone https://github.com/barlus-engineer/la-skb-backend.git
+   cd la-skb-backend
    ```
 
 2. **Set Up Environment Variables**:
