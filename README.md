@@ -58,12 +58,12 @@ Ensure you have the following installed on your system:
 
 4. **Build the Server**:
    ```bash
-   go build cmd/main.go
+   cmd/build.sh
    ```
 
 5. **Start the Server**:
    ```bash
-   cmd/main
+   out/laskb_server
    ```
 
 <!-- ### Directory Structure
