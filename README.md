@@ -31,7 +31,7 @@ Ensure you have the following installed on your system:
 
 - [Go](https://go.dev/) (version 1.18 or higher recommended)
 - [Git](https://git-scm.com/)
-- [MariaDB](https://mariadb.org/) (version 10.5 or higher)
+- [Postgresql](https://postgresql.org/) (version 15 or higher)
 
 ### Installation
 
