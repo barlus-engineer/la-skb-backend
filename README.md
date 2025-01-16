@@ -1,3 +1,4 @@
+# xxx Dev now!! Not yed release xxx
 # Laos School Knowledge Base (Back-End)
 
 An open-source backend platform for a school knowledge base in Laos, licensed under the MIT License.
@@ -30,14 +31,14 @@ Ensure you have the following installed on your system:
 
 - [Go](https://go.dev/) (version 1.18 or higher recommended)
 - [Git](https://git-scm.com/)
-- [MariaDB](https://mariadb.org/) (version 10.5 or higher)
+- [Postgresql](https://postgresql.org/) (version 15 or higher)
 
 ### Installation
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/barlus-engineer/la-school-knowledge-base-backend.git
-   cd la-school-knowledge-base-backend
+   git clone https://github.com/barlus-engineer/la-skb-backend.git
+   cd la-skb-backend
    ```
 
 2. **Set Up Environment Variables**:
@@ -57,12 +58,12 @@ Ensure you have the following installed on your system:
 
 4. **Build the Server**:
    ```bash
-   go build cmd/main.go
+   cmd/build.sh
    ```
 
 5. **Start the Server**:
    ```bash
-   cmd/main
+   out/laskb_server
    ```
 
 <!-- ### Directory Structure
