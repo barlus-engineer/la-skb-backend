@@ -59,7 +59,7 @@ func SignIn(c *gin.Context) {
 	result := Auth.SignIn()
 	if result.Status == http.StatusOK {
 		session := sessions.Default(c)
-		session.Set(Auth.Username, "{}")
+		session.Set("username", data.Username)
 		session.Save()
 	}
 	c.JSON(result.Status, gin.H{

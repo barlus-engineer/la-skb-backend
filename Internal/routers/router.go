@@ -2,10 +2,11 @@ package routers
 
 import (
 	"github.com/gin-contrib/sessions"
-	"github.com/gin-contrib/sessions/cookie"
+	gormstore "github.com/gin-contrib/sessions/gorm"
 	"github.com/gin-gonic/gin"
 
 	"la-skb/Internal/app/controllers"
+	"la-skb/Internal/app/database"
 	"la-skb/config"
 )
 
@@ -14,8 +15,9 @@ func SetupServer() *gin.Engine {
 
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.New()
+	db := database.GetDB()
 	
-	store := cookie.NewStore([]byte(cfg.Secret))
+	store := gormstore.NewStore(db, true, []byte(cfg.Secret))
 	app.Use(
 		sessions.Sessions("username", store),
 	)
