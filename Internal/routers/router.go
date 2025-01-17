@@ -18,6 +18,7 @@ func SetupServer() *gin.Engine {
 	db := database.GetDB()
 	
 	store := gormstore.NewStore(db, true, []byte(cfg.Secret))
+	// Fix it, save only sessoin key
 	app.Use(
 		sessions.Sessions("username", store),
 	)
