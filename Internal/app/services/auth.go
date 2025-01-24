@@ -1,98 +1,122 @@
 package services
 
 import (
-	"fmt"
+	"la-skb/Internal/app/appError"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/repositories"
-	"la-skb/text"
-	"net/http"
+	"la-skb/config"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
 )
 
+var cfg = config.LoadConfig()
 type Auth entities.Auth
 
-func (p *Auth) SignUp() *entities.AuthReturnData {
+/* 
+	SignUp handles user registration.
+	Requires:
+	- Auth.Username: The username to be registered.
+	- Auth.Password: The password for the new user.
+*/
+func (p *Auth) SignUp() error {
 	var User repositories.User
-	if err := User.GetByUsername(p.Username); err == nil && err != gorm.ErrRecordNotFound {
-		return &entities.AuthReturnData{
-			Status:  http.StatusConflict,
-			Message: fmt.Sprintf(text.Set["auth.signup.user_exists"], p.Username),
-		}
+	if err := User.GetByUsername(p.Username); err == nil && err != appError.ErrUserNotFound {
+		return appError.ErrSignupUserExists
 	}
 	if err := User.Create(p.Username, p.Password); err != nil {
-		return &entities.AuthReturnData{
-			Status:  http.StatusInternalServerError,
-			Message: text.Set["auth.signup.error"],
-		}
+		return appError.ErrSignup
 	}
-	return &entities.AuthReturnData{
-		Status:  http.StatusCreated,
-		Message: text.Set["auth.signup.success"],
-	}
+	
+	return nil
 }
 
-func (p *Auth) SignIn() *entities.AuthReturnData {
+/* 
+	SignIn handles user login.
+	Requires:
+	- Auth.Username: The username to authenticate.
+	- Auth.Password: The password for authentication.
+*/
+func (p *Auth) SignIn() error {
 	var User repositories.User
 	if err := User.GetByUsername(p.Username); err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return &entities.AuthReturnData{
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf(text.Set["auth.signin.user_notfound"], p.Username),
-			}
+		if err == appError.ErrUserNotFound {
+			return appError.ErrSigninUserNotFound
 		}
-		return &entities.AuthReturnData{
-			Status:  http.StatusInternalServerError,
-			Message: text.Set["auth.signin.server_error"],
-		}
+		return appError.ErrSignin
 	}
 
 	userPassword := User.Password
 	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
-		return &entities.AuthReturnData{
-			Status:  http.StatusUnauthorized,
-			Message: text.Set["auth.signin.password_incorrect"],
-		}
+		return appError.ErrSigninPasswordIncorrect
 	}
 
-	return &entities.AuthReturnData{
-		Status:  http.StatusOK,
-		Message: text.Set["auth.signin.success"],
-	}
+	return nil
 }
 
-func (p *Auth) DeleteAccount() *entities.AuthReturnData {
+/* 
+	DeleteAccount handles account deletion.
+	Requires:
+	- Auth.Username: The username of the account to delete.
+	- Auth.Password: The password for authentication.
+*/
+func (p *Auth) DeleteAccount() error {
 	var User repositories.User
 	if err := User.GetByUsername(p.Username); err != nil {
-		if err == gorm.ErrRecordNotFound {
-			return &entities.AuthReturnData{
-				Status:  http.StatusNotFound,
-				Message: fmt.Sprintf(text.Set["auth.delete_account.username_notfound"], p.Username),
-			}
+		if err == appError.ErrUserNotFound {
+			return appError.ErrDelAccountUserNotFound
 		}
-		return &entities.AuthReturnData{
-			Status:  http.StatusInternalServerError,
-			Message: text.Set["auth.delete_account.server_error"],
-		}
+		return appError.ErrDelAccount
 	}
 
 	userPassword := User.Password
 	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
-		return &entities.AuthReturnData{
-			Status:  http.StatusUnauthorized,
-			Message: text.Set["auth.delete_account.password_incorrect"],
-		}
+		return appError.ErrDelAccountPasswordIncorrect
 	}
 
 	if err := User.Delete(); err != nil {
-		return &entities.AuthReturnData{
-			Status:  http.StatusInternalServerError,
-			Message: fmt.Sprintf(text.Set["auth.delete_account.error"], p.Username),
-		}
+		return appError.ErrDelAccount
 	}
-	return &entities.AuthReturnData{
-		Status:  http.StatusOK,
-		Message: fmt.Sprintf(text.Set["auth.delete_account.success"], p.Username),
+
+	return nil
+}
+
+/*
+	RefreshJWT handles account deletion.
+	Requires:
+	- Auth.Username: The username of the account to delete.
+*/
+func (p *Auth) RefreshJWT() (string, error) {
+	claims := jwt.MapClaims{
+		"username": p.Username,
+		"iat":      time.Now().Unix(),
 	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(cfg.Secret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
+}
+
+/*
+	AccessJWT handles account deletion.
+	Requires:
+	- Auth.Username: The username of the account to delete.
+*/
+func (p *Auth) AccessJWT() (string, error) {
+	claims := jwt.MapClaims{
+		"username": p.Username,
+		"iat":      time.Now().Unix(),
+		"exp":      time.Now().Add(time.Minute * 15).Unix(),
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	tokenString, err := token.SignedString(cfg.PublicSecret)
+	if err != nil {
+		return "", err
+	}
+
+	return tokenString, nil
 }

@@ -1,24 +1,22 @@
 package controllers
 
 import (
+	"la-skb/Internal/app/appError"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/services"
 	"la-skb/text"
 	"net/http"
 	"strings"
 
-	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 )
 
 func SignUp(c *gin.Context) {
 	var Auth services.Auth
-	var data entities.AuthFormData
+	var data entities.AuthForm
 
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error": err.Error(),
-		})
+		c.Status(http.StatusBadRequest)
 		return
 	}
 
@@ -26,20 +24,35 @@ func SignUp(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": text.Set["auth.signup.incomplete_form"],
+			"error": text.AuthSignUpIncompleteForm,
 		})
 		return
 	}
 
-	result := Auth.SignUp()
-	c.JSON(result.Status, gin.H{
-		"message": result.Message,
+	if err := Auth.SignUp(); err != nil {
+		switch err {
+			case appError.ErrSignup: {
+				c.Status(http.StatusInternalServerError)
+			}
+			case appError.ErrSignupUserExists: {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": text.AuthSignUpUserExists,
+				})
+			}
+			default: {
+				c.Status(http.StatusInternalServerError)
+			}
+		}
+		return
+	}
+	c.JSON(http.StatusCreated, gin.H{
+		"message": text.AuthSignUpSuccess,
 	})
 }
 
 func SignIn(c *gin.Context) {
 	var Auth services.Auth
-	var data entities.AuthFormData
+	var data entities.AuthForm
 
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -51,34 +64,53 @@ func SignIn(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": text.Set["auth.signin.incomplete_form"],
+			"error": text.AuthSignInIncompleteForm,
 		})
 		return
 	}
-
-	result := Auth.SignIn()
-	if result.Status == http.StatusOK {
-		session := sessions.Default(c)
-		session.Set("username", data.Username)
-		session.Save()
+	if err := Auth.SignIn(); err != nil {
+		switch err {
+			case appError.ErrSignin: {
+				c.Status(http.StatusInternalServerError)
+			}
+			case appError.ErrSigninUserNotFound: {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": text.AuthSignInUserNotFound,
+				})
+			}
+			case appError.ErrSigninPasswordIncorrect: {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": text.AuthSignInPasswordIncorrect,
+				})
+			}
+			default: {
+				c.Status(http.StatusInternalServerError)
+			}
+		}
+		return
 	}
-	c.JSON(result.Status, gin.H{
-		"message": result.Message,
+	token, err := Auth.AccessJWT()
+	if err != nil {
+		c.Status(http.StatusInternalServerError)
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": text.AuthSignInSuccess,
+		"token": token,
 	})
 }
 
-func SignOut(c *gin.Context) {
-	session := sessions.Default(c)
-	session.Clear()
-	session.Save()
-	c.JSON(http.StatusOK, gin.H{
-		"message": text.Set["auth.signout.success"],
-	})
-}
+// func SignOut(c *gin.Context) {
+// 	session := sessions.Default(c)
+// 	session.Clear()
+// 	session.Save()
+// 	c.JSON(http.StatusOK, gin.H{
+// 		"message": text.Set["auth.signout.success"],
+// 	})
+// }
 
 func DeleteAccount(c *gin.Context) {
 	var Auth services.Auth
-	var data entities.AuthFormData
+	var data entities.AuthForm
 
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -90,18 +122,33 @@ func DeleteAccount(c *gin.Context) {
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": text.Set["auth.delete_account.incomplete_form"],
+			"error": text.AuthDeleteAccountIncompleteForm,
 		})
 		return
 	}
 
-	result := Auth.DeleteAccount()
-	if result.Status == http.StatusOK {
-		session := sessions.Default(c)
-		session.Clear()
-		session.Save()
+	if err := Auth.DeleteAccount(); err != nil {
+		switch err {
+			case appError.ErrDelAccount: {
+				c.Status(http.StatusInternalServerError)
+			}
+			case appError.ErrDelAccountUserNotFound: {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": text.AuthSignInUserNotFound,
+				})
+			}
+			case appError.ErrDelAccountPasswordIncorrect: {
+				c.JSON(http.StatusBadRequest, gin.H{
+					"error": text.AuthSignInPasswordIncorrect,
+				})
+			}
+			default: {
+				c.Status(http.StatusBadRequest)
+			}
+		}
+		return
 	}
-	c.JSON(result.Status, gin.H{
-		"message": result.Message,
+	c.JSON(http.StatusOK, gin.H{
+		"message": text.AuthDeleteAccountSuccess,
 	})
 }

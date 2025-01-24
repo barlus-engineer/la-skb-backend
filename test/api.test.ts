@@ -50,7 +50,7 @@ describe("SignUp tests", () => {
     })
 
     it("Cannot SignUp again with the same Username", async () => {
-        await TestUtils.assertStatus(endpoint, { username: MockData.Username, password: MockData.Password }, 409)
+        await TestUtils.assertStatus(endpoint, { username: MockData.Username, password: MockData.Password }, 400)
     })
 })
 
@@ -74,11 +74,11 @@ describe("SignIn tests", () => {
     })
 
     it("Username not found", async () => {
-        await TestUtils.assertStatus(endpoint, { username: ".", password: MockData.Password }, 404)
+        await TestUtils.assertStatus(endpoint, { username: ".", password: MockData.Password }, 400)
     })
 
     it("Incorrect Password", async () => {
-        await TestUtils.assertStatus(endpoint, { username: MockData.Username, password: "." }, 401)
+        await TestUtils.assertStatus(endpoint, { username: MockData.Username, password: "." }, 400)
     })
 })
 

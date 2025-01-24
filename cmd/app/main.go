@@ -6,7 +6,6 @@ import (
 	"la-skb/Internal/routers"
 	"la-skb/config"
 	"la-skb/pkg/logger"
-	"la-skb/text"
 )
 
 func main() {
@@ -14,9 +13,6 @@ func main() {
 	database.InitDB()
 	db := database.GetDB()
 	database.MigrateDB(db)
-
-	// lang
-	text.InitLang()
 
 	// server
 	cfg := config.LoadConfig()

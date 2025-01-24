@@ -5,12 +5,11 @@ type Auth struct {
 	Password string
 }
 
-type AuthReturnData struct {
-	Status	int
-	Message	string
+type AuthErr struct {
+	UserNotFound string
 }
 
-type AuthFormData struct {
+type AuthForm struct {
 	Username string
 	Password string
 }

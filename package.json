@@ -8,7 +8,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "test": "run tests/api.test.ts"
+    "test": "run test/api.test.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.3.0",
