@@ -2,25 +2,25 @@ package logger
 
 import (
 	"fmt"
-	"la-skb/pkg"
+	"la-skb/pkg/color"
 	"log"
 )
 
 
 func Info(value string) {
-	color := pkg.Colors.Blue
+	color := colors.Blue
 	text := fmt.Sprintf("[%sInfo\033[0m] %s", color, value)
 	log.Println(text)
 }
 
 func Warning(value string) {
-	color := pkg.Colors.Yellow
+	color := colors.Yellow
 	text := fmt.Sprintf("[%sWarning\033[0m] %s", color, value)
 	log.Println(text)
 }
 
 func Alert(value string) {
-	color := pkg.Colors.Red
+	color := colors.Red
 	text := fmt.Sprintf("%sAlert\033[0m] %s", color, value)
 	log.Println(text)
 }
