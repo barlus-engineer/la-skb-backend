@@ -22,10 +22,11 @@ type Auth entities.Auth
 */
 func (p *Auth) SignUp() error {
 	var User repositories.User
-	if err := User.GetByUsername(p.Username); err == nil && err != appError.ErrUserNotFound {
+	User.Username, User.Password = p.Username, p.Password
+	if err := User.GetByUsername(); err == nil && err != appError.ErrUserNotFound {
 		return appError.ErrSignupUserExists
 	}
-	if err := User.Create(p.Username, p.Password); err != nil {
+	if err := User.Create(); err != nil {
 		return appError.ErrSignup
 	}
 
@@ -40,7 +41,8 @@ func (p *Auth) SignUp() error {
 */
 func (p *Auth) SignIn() error {
 	var User repositories.User
-	if err := User.GetByUsername(p.Username); err != nil {
+	User.Username, User.Password = p.Username, p.Password
+	if err := User.GetByUsername(); err != nil {
 		if err == appError.ErrUserNotFound {
 			return appError.ErrSigninUserNotFound
 		}
@@ -61,7 +63,8 @@ func (p *Auth) SignIn() error {
 */
 func (p *Auth) DeleteAccount() error {
 	var User repositories.User
-	if err := User.GetByUsername(p.Username); err != nil {
+	User.Username, User.Password = p.Username, p.Password
+	if err := User.GetByUsername(); err != nil {
 		if err == appError.ErrUserNotFound {
 			return appError.ErrDelAccountUserNotFound
 		}

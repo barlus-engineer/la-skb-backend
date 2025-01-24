@@ -3,13 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"os"
-	"os/signal"
-	"syscall"
+	"la-skb/Internal/app/cache"
 	"la-skb/Internal/app/database"
 	"la-skb/Internal/routers"
 	"la-skb/config"
 	"la-skb/pkg/logger"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -17,6 +18,9 @@ func main() {
 	database.InitDB()
 	db := database.GetDB()
 	database.MigrateDB(db)
+
+	// cache
+	cache.InitializeCache()
 
 	// server
 	cfg := config.LoadConfig()
@@ -36,16 +40,18 @@ func main() {
 	}()
 
 	// Goroutine to listen for "stop" command
-	go func() {
-		reader := bufio.NewReader(os.Stdin)
-		for {
-			input, _ := reader.ReadString('\n')
-			if input == "stop\n" {
-				logger.Info("Received stop command. Shutting down server....")
-				os.Exit(0)
-			}
-		}
-	}()
+	go stopCMD()
 
 	serve.Run(Addr)
+}
+
+func stopCMD() {
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		input, _ := reader.ReadString('\n')
+		if input == "stop\n" {
+			logger.Info("Received stop command. Shutting down server....")
+			os.Exit(0)
+		}
+	}
 }

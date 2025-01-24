@@ -12,6 +12,7 @@ type Config struct {
 	Port 			string
 	Secret			string
 	PublicSecret	string
+	CacheURI		string
 	DbURI			string
 }
 
@@ -31,7 +32,8 @@ func LoadConfig() *Config {
 		cfg_Port = "3432"
 	}
 	cfg_Db_Secret := os.Getenv("SECRET")
-	cfg_Db_PublicSecret := os.Getenv("SECRET")
+	cfg_Db_PublicSecret := os.Getenv("PUBLIC_SECRET")
+	cfg_Cache_URI := os.Getenv("CACHE_URI")
 	cfg_Db_URI := os.Getenv("DB_URI")
 
 	cfg := Config{
@@ -39,6 +41,7 @@ func LoadConfig() *Config {
 		Port: cfg_Port,
 		Secret: cfg_Db_Secret,
 		PublicSecret: cfg_Db_PublicSecret,
+		CacheURI: cfg_Cache_URI,
 		DbURI: cfg_Db_URI,
 	}
 
