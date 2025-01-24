@@ -5,23 +5,25 @@ var (
 
 	HelloWorld = "ສະບາຍດີ, ໂລກ!"
 
-	AuthSignUpUserExists       = "ມີຊື່ຜູ້ໃຊ້ '%s' ໃນລະບົບແລ້ວ, ກະລຸນາຕັ້ງຊື່ຜູ້ໃຊ້ໃໝ່"
-	AuthSignUpError            = "ມີບັນຫາໃນການລົງທະບຽນ"
-	AuthSignUpSuccess          = "ລົງທະບຽນສຳເລັດແລ້ວ"
-	AuthSignUpIncompleteForm   = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
+	BindBodyWithJSONError = "ບໍ່ສາມາດແປ່ງ JSON ໄດ້, ຂໍ້ມູນ JSON ອາດຈະບໍ່ຖືກຕ້ອງ"
 
-	AuthSignInUserNotFound     = "ບໍ່ມີບັນຊີຜູ້ໃຊ້ '%s' ໃນລະບົບ"
-	AuthSignInServerError      = "ເຊີບເວີມີບັນຫາບາງຢ່າງ"
-	AuthSignInPasswordIncorrect = "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ"
-	AuthSignInSuccess          = "ເຂົ້າສູ່ລະບົບສຳເລັດແລ້ວ"
-	AuthSignInIncompleteForm   = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
+	SignUpUserExists     = "ມີຊື່ຜູ້ໃຊ້ດັັງກ່າວໃນລະບົບແລ້ວ, ກະລຸນາຕັ້ງຊື່ຜູ້ໃຊ້ໃໝ່"
+	SignUpError          = "ມີບັນຫາໃນການລົງທະບຽນ"
+	SignUpSuccess        = "ລົງທະບຽນສຳເລັດແລ້ວ"
+	SignUpIncompleteForm = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
 
-	AuthSignOutSuccess         = "ອອກຈາກລະບົບສຳເລັດແລ້ວ"
+	SignInUserNotFound      = "ບໍ່ມີບັນຊີຜູ້ໃຊ້ດັງກ່າວໃນລະບົບ"
+	SignInServerError       = "ເຊີບເວີມີບັນຫາບາງຢ່າງ"
+	SignInPasswordIncorrect = "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ"
+	SignInSuccess           = "ເຂົ້າສູ່ລະບົບສຳເລັດແລ້ວ"
+	SignInIncompleteForm    = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
 
-	AuthDeleteAccountUsernameNotFound = "ບໍ່ມີບັນຊີຜູ້ໃຊ້ '%s' ໃນລະບົບ"
-	AuthDeleteAccountServerError      = "ເຊີບເວີມີບັນຫາບາງຢ່າງ"
-	AuthDeleteAccountPasswordIncorrect = "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ"
-	AuthDeleteAccountError            = "ມີບັນຫາໃນການລົບບັນຊີຜູ້ໃຊ້ '%s'"
-	AuthDeleteAccountSuccess          = "ລົບບັນຊີຜູ້ໃຊ້ '%s' ສຳເລັດແລ້ວ"
-	AuthDeleteAccountIncompleteForm   = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
+	SignOutSuccess = "ອອກຈາກລະບົບສຳເລັດແລ້ວ"
+
+	DeleteAccountUsernameNotFound  = "ບໍ່ມີບັນຊີຜູ້ໃຊ້ດັງກ່າວໃນລະບົບ"
+	DeleteAccountServerError       = "ເຊີບເວີມີບັນຫາບາງຢ່າງ"
+	DeleteAccountPasswordIncorrect = "ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ"
+	DeleteAccountError             = "ມີບັນຫາໃນການລົບບັນຊີຜູ້ໃຊ້"
+	DeleteAccountSuccess           = "ລົບບັນຊີຜູ້ໃຊ້ສຳເລັດແລ້ວ"
+	DeleteAccountIncompleteForm    = "ຂໍ້ມູນບໍ່ຄົບ, ກະລຸນາປ້ອນຂໍ້ມູນໃສ່ຟອມໃຫ້ຄົບ"
 )

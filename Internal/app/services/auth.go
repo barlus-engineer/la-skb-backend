@@ -28,7 +28,7 @@ func (p *Auth) SignUp() error {
 	if err := User.Create(p.Username, p.Password); err != nil {
 		return appError.ErrSignup
 	}
-	
+
 	return nil
 }
 
@@ -46,9 +46,7 @@ func (p *Auth) SignIn() error {
 		}
 		return appError.ErrSignin
 	}
-
-	userPassword := User.Password
-	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
+	if err := bcrypt.CompareHashAndPassword([]byte(User.Password), []byte(p.Password)); err != nil {
 		return appError.ErrSigninPasswordIncorrect
 	}
 
@@ -87,13 +85,13 @@ func (p *Auth) DeleteAccount() error {
 	Requires:
 	- Auth.Username: The username of the account to delete.
 */
-func (p *Auth) RefreshJWT() (string, error) {
+func RefreshJWT(p Auth) (string, error) {
 	claims := jwt.MapClaims{
 		"username": p.Username,
 		"iat":      time.Now().Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(cfg.Secret)
+	tokenString, err := token.SignedString([]byte(cfg.Secret))
 	if err != nil {
 		return "", err
 	}
@@ -106,14 +104,14 @@ func (p *Auth) RefreshJWT() (string, error) {
 	Requires:
 	- Auth.Username: The username of the account to delete.
 */
-func (p *Auth) AccessJWT() (string, error) {
+func AccessJWT(p Auth) (string, error) {
 	claims := jwt.MapClaims{
 		"username": p.Username,
 		"iat":      time.Now().Unix(),
 		"exp":      time.Now().Add(time.Minute * 15).Unix(),
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	tokenString, err := token.SignedString(cfg.PublicSecret)
+	tokenString, err := token.SignedString([]byte(cfg.PublicSecret))
 	if err != nil {
 		return "", err
 	}
