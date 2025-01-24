@@ -32,6 +32,7 @@ Ensure you have the following installed on your system:
 - [Go](https://go.dev/) (version 1.18 or higher recommended)
 - [Git](https://git-scm.com/)
 - [Postgresql](https://postgresql.org/) (version 15 or higher)
+- [Redis](https://redis.io/) (version 9 or higher)
 
 ### Installation
 
@@ -48,6 +49,7 @@ Ensure you have the following installed on your system:
    IP=localhost
    PORT=3432
    SECRET=[your secret key]
+   CACHE_URI=redis://localhost:6379
    PUBLIC_SECRET=[your public secret key]
    DB_URI="postgres://[username]:[password]@localhost:5432/[database]?sslmode=[sslmode]&timezone=[time zone]"
    ```
