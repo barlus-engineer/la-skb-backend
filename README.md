@@ -48,6 +48,7 @@ Ensure you have the following installed on your system:
    IP=localhost
    PORT=3432
    SECRET=[your secret key]
+   PUBLIC_SECRET=[your public secret key]
    DB_URI="postgres://[username]:[password]@localhost:5432/[database]?sslmode=[sslmode]&timezone=[time zone]"
    ```
 
