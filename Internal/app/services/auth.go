@@ -1,113 +1,127 @@
 package services
 
 import (
-	"la-skb/Internal/app/appError"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/repositories"
 	"la-skb/config"
+	"la-skb/pkg"
+	"math"
 	"time"
 
+	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
 	"golang.org/x/crypto/bcrypt"
 )
 
-var cfg = config.LoadConfig()
 type Auth entities.Auth
 
-/* 
-	SignUp handles user registration.
-	Requires:
-	- Auth.Username: The username to be registered.
-	- Auth.Password: The password for the new user.
+/*
+SignUp handles user registration.
+Requires:
+- Auth.Username: The username to be registered.
+- Auth.Password: The password for the new user.
 */
 func (p *Auth) SignUp() error {
 	var User repositories.User
 	User.Username, User.Password = p.Username, p.Password
-	if err := User.GetByUsername(); err == nil && err != appError.ErrUserNotFound {
-		return appError.ErrSignupUserExists
+	if err := User.GetByUsername(); err == nil && err != pkg.ErrUserNotFound {
+		return pkg.ErrSignupUserExists
 	}
 	if err := User.Create(); err != nil {
-		return appError.ErrSignup
+		return pkg.ErrSignup
 	}
 
 	return nil
 }
 
-/* 
-	SignIn handles user login.
-	Requires:
-	- Auth.Username: The username to authenticate.
-	- Auth.Password: The password for authentication.
+/*
+SignIn handles user login.
+Requires:
+- Auth.Username: The username to authenticate.
+- Auth.Password: The password for authentication.
 */
 func (p *Auth) SignIn() error {
 	var User repositories.User
 	User.Username, User.Password = p.Username, p.Password
 	if err := User.GetByUsername(); err != nil {
-		if err == appError.ErrUserNotFound {
-			return appError.ErrSigninUserNotFound
+		if err == pkg.ErrUserNotFound {
+			return pkg.ErrSigninUserNotFound
 		}
-		return appError.ErrSignin
+		return pkg.ErrSignin
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(User.Password), []byte(p.Password)); err != nil {
-		return appError.ErrSigninPasswordIncorrect
+		return pkg.ErrSigninPasswordIncorrect
 	}
 
 	return nil
 }
 
-/* 
-	DeleteAccount handles account deletion.
-	Requires:
-	- Auth.Username: The username of the account to delete.
-	- Auth.Password: The password for authentication.
+/*
+DeleteAccount handles account deletion.
+Requires:
+- Auth.Username: The username of the account to delete.
+- Auth.Password: The password for authentication.
 */
 func (p *Auth) DeleteAccount() error {
 	var User repositories.User
 	User.Username, User.Password = p.Username, p.Password
 	if err := User.GetByUsername(); err != nil {
-		if err == appError.ErrUserNotFound {
-			return appError.ErrDelAccountUserNotFound
+		if err == pkg.ErrUserNotFound {
+			return pkg.ErrDelAccountUserNotFound
 		}
-		return appError.ErrDelAccount
+		return pkg.ErrDelAccount
 	}
 
 	userPassword := User.Password
 	if err := bcrypt.CompareHashAndPassword([]byte(userPassword), []byte(p.Password)); err != nil {
-		return appError.ErrDelAccountPasswordIncorrect
+		return pkg.ErrDelAccountPasswordIncorrect
 	}
 
 	if err := User.Delete(); err != nil {
-		return appError.ErrDelAccount
+		return pkg.ErrDelAccount
 	}
 
 	return nil
 }
 
 /*
-	RefreshJWT handles account deletion.
-	Requires:
-	- Auth.Username: The username of the account to delete.
+RefreshJWT handles account deletion.
+Requires:
+- Auth.Username: The username of the account to delete.
 */
-func RefreshJWT(p Auth) (string, error) {
+func RefreshJWT(c *gin.Context, p Auth) error {
+	var cfg = config.LoadConfig()
 	claims := jwt.MapClaims{
 		"username": p.Username,
 		"iat":      time.Now().Unix(),
 	}
+
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(cfg.Secret))
 	if err != nil {
-		return "", err
+		return pkg.ErrRefreshJWTGen
 	}
 
-	return tokenString, nil
+	c.SetCookie(
+		"refresh_jwt",
+		tokenString,
+		math.MaxInt32,
+		"/",
+		cfg.IP,
+		true,
+		true,
+	)
+
+	return nil
 }
 
 /*
-	AccessJWT handles account deletion.
-	Requires:
-	- Auth.Username: The username of the account to delete.
+AccessJWT handles account deletion.
+Requires:
+- Auth.Username: The username of the account to delete.
 */
 func AccessJWT(p Auth) (string, error) {
+	var cfg = config.LoadConfig()
 	claims := jwt.MapClaims{
 		"username": p.Username,
 		"iat":      time.Now().Unix(),
@@ -116,7 +130,7 @@ func AccessJWT(p Auth) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, err := token.SignedString([]byte(cfg.PublicSecret))
 	if err != nil {
-		return "", err
+		return "", pkg.ErrAccessJWTGen
 	}
 
 	return tokenString, nil

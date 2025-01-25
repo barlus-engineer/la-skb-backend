@@ -7,20 +7,26 @@ import (
 )
 
 
-func Info(value string) {
+func Info(values ...any) {
+	value := fmt.Sprintf("%v", values)
+	value = value[1:len(value)-1]
 	color := colors.Blue
-	text := fmt.Sprintf("[%sInfo\033[0m] %s", color, value)
+	text := fmt.Sprintf("[%sInfo\033[0m]\t%s", color, value)
 	log.Println(text)
 }
 
-func Warning(value string) {
+func Warning(values ...any) {
+	value := fmt.Sprintf("%v", values)
+	value = value[1:len(value)-1]
 	color := colors.Yellow
-	text := fmt.Sprintf("[%sWarning\033[0m] %s", color, value)
+	text := fmt.Sprintf("[%sWarning\033[0m]\t%s", color, value)
 	log.Println(text)
 }
 
-func Alert(value string) {
+func Alert(values ...any) {
+	value := fmt.Sprintf("%v", values)
+	value = value[1:len(value)-1]
 	color := colors.Red
-	text := fmt.Sprintf("%sAlert\033[0m] %s", color, value)
+	text := fmt.Sprintf("[%sAlert\033[0m]\t%s", color, value)
 	log.Println(text)
 }

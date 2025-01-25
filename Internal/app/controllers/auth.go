@@ -1,12 +1,10 @@
 package controllers
 
 import (
-	"fmt"
-	"la-skb/Internal/app/appError"
 	"la-skb/Internal/app/entities"
 	"la-skb/Internal/app/services"
+	"la-skb/pkg"
 	"la-skb/text"
-	"math"
 	"net/http"
 	"strings"
 
@@ -18,14 +16,14 @@ func SignUp(c *gin.Context) {
 	var data entities.AuthForm
 
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
-		handleError(c, appError.ErrBindBodyWithJSON)
+		handleError(c, pkg.ErrBindBodyWithJSON)
 		return
 	}
 
 	Auth.Username, Auth.Password = data.Username, data.Password
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
-		handleError(c, appError.ErrSigninSignInIncompleteForm)
+		handleError(c, pkg.ErrSigninIncompleteForm)
 		return
 	}
 
@@ -43,36 +41,31 @@ func SignIn(c *gin.Context) {
 	var data entities.AuthForm
 
 	if err := c.ShouldBindBodyWithJSON(&data); err != nil {
-		handleError(c, appError.ErrBindBodyWithJSON)
+		handleError(c, pkg.ErrBindBodyWithJSON)
 		return
 	}
 	Auth.Username, Auth.Password = data.Username, data.Password
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
-		handleError(c, appError.ErrSigninSignInIncompleteForm)
+		handleError(c, pkg.ErrSigninIncompleteForm)
 		return
 	}
 	if err := Auth.SignIn(); err != nil {
 		handleError(c, err)
 		return
 	}
-	refreshToken, err := services.RefreshJWT(Auth)
-	if err != nil {
-		c.Status(http.StatusInternalServerError)
-		fmt.Println(err)
+	if err := services.RefreshJWT(c, Auth); err != nil {
+		handleError(c, err)
 		return
 	}
-	c.SetCookie(
-        "refresh_jwt",
-        refreshToken,
-        math.MaxInt32,
-        "/",
-        cfg.IP,
-        true,
-        true,
-    )
+	accessToken, err := services.AccessJWT(Auth)
+	if err != nil {
+		handleError(c, err)
+		return
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"message": text.SignInSuccess,
+		"token":   accessToken,
 	})
 }
 
@@ -98,7 +91,7 @@ func DeleteAccount(c *gin.Context) {
 	Auth.Username, Auth.Password = data.Username, data.Password
 
 	if strings.TrimSpace(Auth.Username) == "" || strings.TrimSpace(Auth.Password) == "" {
-		handleError(c, appError.ErrDelIncompleteForm)
+		handleError(c, pkg.ErrDelIncompleteForm)
 		return
 	}
 
@@ -115,68 +108,97 @@ func DeleteAccount(c *gin.Context) {
 
 func handleError(c *gin.Context, err error) {
 	switch err {
-		case appError.ErrBindBodyWithJSON: {
+	case pkg.ErrBindBodyWithJSON:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.BindBodyWithJSONError,
 			})
 		}
-		// SignUp - HandleError
-		case appError.ErrSigninSignInIncompleteForm: {
+	// SignUp - HandleError
+	case pkg.ErrSigninIncompleteForm:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignUpIncompleteForm,
 			})
 		}
-		case appError.ErrSignup: {
+	case pkg.ErrSignup:
+		{
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": text.SignUpIncompleteForm,
 			})
 		}
-		case appError.ErrSignupUserExists: {
+	case pkg.ErrSignupUserExists:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignUpUserExists,
 			})
 		}
-		// SignIn - HandleError
-		case appError.ErrSigninSignInIncompleteForm: {
+	// SignIn - HandleError
+	case pkg.ErrSigninIncompleteForm:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignInIncompleteForm,
 			})
 		}
-		case appError.ErrSignin: {
+	case pkg.ErrSignin:
+		{
 			c.JSON(http.StatusInternalServerError, gin.H{
 				"error": text.SignInServerError,
 			})
 		}
-		case appError.ErrSigninUserNotFound: {
+	case pkg.ErrSigninUserNotFound:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignInUserNotFound,
 			})
 		}
-		case appError.ErrSigninPasswordIncorrect: {
+	case pkg.ErrSigninPasswordIncorrect:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignInPasswordIncorrect,
 			})
 		}
-		// DeleteAccount
-		case appError.ErrDelIncompleteForm: {
+	// DeleteAccount
+	case pkg.ErrDelIncompleteForm:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.DeleteAccountIncompleteForm,
 			})
 		}
-		case appError.ErrDelAccount: {
-			c.Status(http.StatusInternalServerError)
+	case pkg.ErrDelAccount:
+		{
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": text.DeleteAccountServerError,
+			})
 		}
-		case appError.ErrDelAccountUserNotFound: {
+	case pkg.ErrDelAccountUserNotFound:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignInUserNotFound,
 			})
 		}
-		case appError.ErrDelAccountPasswordIncorrect: {
+	case pkg.ErrDelAccountPasswordIncorrect:
+		{
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": text.SignInPasswordIncorrect,
 			})
 		}
-		default: {
+	// JWT
+	case pkg.ErrRefreshJWTGen:
+		{
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": text.JWTRefreshErrorGen,
+			})
+		}
+	case pkg.ErrAccessJWTGen:
+		{
+			c.JSON(http.StatusInternalServerError, gin.H{
+				"error": text.JWTAccessErrorGen,
+			})
+		}
+	//
+	default:
+		{
 			c.Status(http.StatusInternalServerError)
 		}
 	}
