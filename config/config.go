@@ -9,8 +9,10 @@ import (
 
 type Config struct {
 	Server struct {
-		Host string `yaml:"host"`
-		Port string `yaml:"port"`
+		Host  string `yaml:"host"`
+		Port  string `yaml:"port"`
+		Mode	string	`yaml:"mode"`
+		Pprof bool   `yaml:"pprof"`
 	} `yaml:"server"`
 	Postgres struct {
 		Host     string `yaml:"host"`
@@ -28,7 +30,7 @@ type Config struct {
 
 func LoadConfig() *Config {
 	var (
-		cfg Config
+		cfg      Config
 		filePath = "config.yml"
 	)
 	file, err := os.Open(filePath)

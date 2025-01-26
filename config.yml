@@ -1,8 +1,12 @@
 # Default for Dev
+
 # Server Config
 server:
   host: localhost
   port: 3250
+  # dev configs
+  mode: dev # 'release' or 'dev'
+  pprof: true # 'true' or 'false'
 
 # PostgreSQL Config
 postgres:
