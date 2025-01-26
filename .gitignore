@@ -1,7 +1,0 @@
-cmd/main
-main
-out
-.env
-
-bun.lockb
-node_modules

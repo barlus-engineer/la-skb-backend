@@ -1,0 +1,14 @@
+# Server Config
+Host: localhost
+Port: 3250
+
+# PostgreSQL Config
+Postgresql:
+  USER: "laskb",
+  PASSWORD: "1234",
+  DB: "laskb"
+
+# Redis Config
+Redis:
+  Password: "1234"
+  MaxRam: "256mb"

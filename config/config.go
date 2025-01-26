@@ -1,63 +1,45 @@
 package config
 
 import (
-	"la-skb/pkg/logger"
+	"laskb-server-api/pkg/logger"
 	"os"
-	"strconv"
-	"time"
 
-	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
-	IP   			string
-	Port 			string
-	Secret			string
-	PublicSecret	string
-	CacheURI		string
-	CacheTime		time.Duration
-	DbURI			string
+	Server struct {
+		Host string `yaml:"host"`
+		Port string `yaml:"port"`
+	} `yaml:"server"`
+	Postgres struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Database string `yaml:"database"`
+	} `yaml:"postgres"`
+	Redis struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		Password string `yaml:"password"`
+	} `yaml:"redis"`
 }
 
 func LoadConfig() *Config {
-	err := godotenv.Load()
+	var (
+		cfg Config
+		filePath = "config.yml"
+	)
+	file, err := os.Open(filePath)
 	if err != nil {
-		logger.Warning("Failed to load .env file: ")
-		logger.Info("Fallback: Switching to system environment variables")
+		logger.Fatalf("Failed to open config file '%s'. Error: %v", filePath, err)
 	}
+	defer file.Close()
 
-	cfgIP := os.Getenv("IP")
-	if cfgIP == "" {
-		cfgIP = "127.0.0.1"
-	}
-	cfgPort := os.Getenv("PORT")
-	if cfgPort == "" {
-		cfgPort = "3432"
-	}
-
-	cfgDbSecret := os.Getenv("SECRET")
-	cfgDbPublicSecret := os.Getenv("PUBLIC_SECRET")
-
-	cfgDbURI := os.Getenv("DB_URI")
-
-	cfgCacheURI := os.Getenv("CACHE_URI")
-	cfgCacheTime := 30 * time.Minute
-	if t := os.Getenv("CACHE_TIME"); t != "" {
-		if n, err := strconv.Atoi(t); err == nil {
-			cfgCacheTime = time.Duration(n) * time.Minute
-		} else {
-			logger.Warning("Config: Invalid CACHE_TIME value, using default!. Error: ", err)
-		}
-	}
-
-	cfg := Config{
-		IP:   cfgIP,
-		Port: cfgPort,
-		Secret: cfgDbSecret,
-		PublicSecret: cfgDbPublicSecret,
-		CacheURI: cfgCacheURI,
-		CacheTime: cfgCacheTime,
-		DbURI: cfgDbURI,
+	decoder := yaml.NewDecoder(file)
+	if err := decoder.Decode(&cfg); err != nil {
+		logger.Fatalf("Failed to decode YAML file. Error: %v", err)
 	}
 
 	return &cfg

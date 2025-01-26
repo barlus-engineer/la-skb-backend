@@ -1,21 +1,23 @@
-FROM golang:latest AS builder
+FROM golang:alpine AS builder
 
 WORKDIR /app
 
-COPY go.* ./
+COPY go.* .
+
 RUN go mod download
 
 COPY . .
 
-RUN go build -o server cmd/app/main.go
+RUN go build -o laskb-server-api cmd/main.go
 
-FROM golang:latest
+# Stage 2
+
+FROM alpine:latest
 
 WORKDIR /root/
 
-COPY --from=builder /app/server .
-COPY --from=builder /app/text /root/text
-COPY --from=builder /app/.env .
-EXPOSE 3432
+COPY --from=builder /app/laskb-server-api .
 
-CMD ["./server"]
+EXPOSE 3250
+
+CMD ["./laskb-server-api"]

@@ -1,0 +1,42 @@
+version: '3'
+services:
+  postgresql:
+    image: postgres:latest
+    container_name: laskb-postgres-container
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - laskb-server-api-network
+
+  redis:
+    image: redis:latest
+    container_name: laskb-redis-container
+    command: redis-server --requirepass ${REDIS_PASSWORD} --maxmemory ${REDIS_MAX_RAM} --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    networks:
+      - laskb-server-api-network
+
+  laskb-server-api:
+    image: laskb-server-api:latest
+    container_name: laskb-server-api-container
+    environment:
+      POSTGRES_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgresql:5432/${POSTGRES_DB}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+    ports:
+      - "3250:3250"
+    networks:
+      - laskb-server-api-network
+    restart: unless-stopped
+
+volumes:
+  db-data:
+
+networks:
+  laskb-server-api-network:
